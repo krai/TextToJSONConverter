@@ -88,6 +88,18 @@
             successMsg.style.display = "none";
         }, 2000); // Hide after 2 seconds
     }
+    function convertToJsonl() {
+        try {
+            var jsonInput = document.getElementById("inputText").value;
+            var parsedJson = JSON.parse(jsonInput);
+
+            // Convert the entire JSON object to a single-line string
+            var singleLineJson = JSON.stringify(parsedJson);
+            document.getElementById("outputText").value = singleLineJson;
+        } catch (e) {
+            alert("Invalid JSON input. Please correct it and try again.");
+        }
+    }
 </script>
 </head>
 <body>
@@ -100,10 +112,12 @@
             <button onclick="convertBackToText()">← Convert Back to Text</button>
         </div>
 
+        <button onclick="convertToJsonl()">Convert to Single-Line JSON</button>
         <textarea id="outputText" placeholder="JSON output will appear here..."></textarea>
     </div>
     <button onclick="copyToClipboard('inputText')">Copy Text</button>
     <button onclick="copyToClipboard('outputText')">Copy JSON</button>
     <div id="copySuccess">Copied to clipboard!</div>
 </body>
+</html>
 </html>
