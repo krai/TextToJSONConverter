@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text and JSON Converter</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        text-align: center;
+    }
+    textarea {
+        width: 40%; /* Adjusted for side-by-side layout */
+        height: 300px; /* Fixed height for better alignment */
+        margin: 10px;
+        padding: 10px;
+        vertical-align: top; /* Aligns text areas and buttons */
+    }
+    button {
+        padding: 10px 15px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin: 10px 5px; /* Added horizontal margin */
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    #container {
+        display: flex;
+        justify-content: center;
+        align-items: start; /* Align items at the top */
+    }
+    #buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #copySuccess {
+        color: green;
+        display: none;
+    }
+</style>
+<script>
+    function convertToJSON() {
+        var inputText = document.getElementById("inputText").value;
+        var parts = inputText.split("### ");
+        var conversation = [];
+
+        for (var part of parts) {
+            if (part.trim().startsWith("Human:")) {
+                var text = part.trim().substring("Human:".length).trim();
+                conversation.push({ "speaker": "Human", "text": text });
+            } else if (part.trim().startsWith("Assistant:")) {
+                var text = part.trim().substring("Assistant:".length).trim();
+                conversation.push({ "speaker": "Assistant", "text": text });
+            }
+        }
+
+        var jsonText = JSON.stringify({ "conversation": conversation }, null, 2);
+        document.getElementById("outputText").value = jsonText;
+    }
+
+    function convertBackToText() {
+        var jsonText = document.getElementById("outputText").value;
+        var obj = JSON.parse(jsonText);
+        var text = "";
+
+        obj.conversation.forEach(function(part) {
+            text += "### " + part.speaker + ": " + part.text + "\n";
+        });
+
+        document.getElementById("inputText").value = text.trim();
+    }
+
+    function copyToClipboard(elementId) {
+        var copyText = document.getElementById(elementId);
+        copyText.select();
+        document.execCommand("copy");
+
+        // Show copy success message
+        var successMsg = document.getElementById("copySuccess");
+        successMsg.style.display = "block";
+        setTimeout(function() {
+            successMsg.style.display = "none";
+        }, 2000); // Hide after 2 seconds
+    }
+</script>
+</head>
+<body>
+    <h2>Text and JSON Converter</h2>
+    <div id="container">
+        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+        
+        <div id="buttons">
+            <button onclick="convertToJSON()">Convert to JSON →</button>
+            <button onclick="convertBackToText()">← Convert Back to Text</button>
+        </div>
+
+        <textarea id="outputText" placeholder="JSON output will appear here..."></textarea>
+    </div>
+    <button onclick="copyToClipboard('inputText')">Copy Text</button>
+    <button onclick="copyToClipboard('outputText')">Copy JSON</button>
+    <div id="copySuccess">Copied to clipboard!</div>
+</body>
+</html>
